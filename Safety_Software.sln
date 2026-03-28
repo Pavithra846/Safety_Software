@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Safety_Software", "Safety_Software\Safety_Software.csproj", "{1A6B43C6-5086-492F-BF8C-5F8C0DDD54A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Safety_Software", "Safety_Software\Safety_Software.csproj", "{1A6B43C6-5086-492F-BF8C-5F8C0DDD54A3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotifyHub.Api", "NotifyHub.Api\NotifyHub.Api.csproj", "{79DBB487-6156-4EFC-B28B-D3A81CCB8618}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,11 +17,15 @@ Global
 		{1A6B43C6-5086-492F-BF8C-5F8C0DDD54A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A6B43C6-5086-492F-BF8C-5F8C0DDD54A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A6B43C6-5086-492F-BF8C-5F8C0DDD54A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79DBB487-6156-4EFC-B28B-D3A81CCB8618}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79DBB487-6156-4EFC-B28B-D3A81CCB8618}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79DBB487-6156-4EFC-B28B-D3A81CCB8618}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79DBB487-6156-4EFC-B28B-D3A81CCB8618}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {21E306FF-D3B8-4521-AB66-9F0C58E76F86}
+		SolutionGuid = {22531D13-430A-4696-8AB2-D840C0C8C821}
 	EndGlobalSection
 EndGlobal
