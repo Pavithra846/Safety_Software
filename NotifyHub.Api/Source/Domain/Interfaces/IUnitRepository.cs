@@ -1,4 +1,5 @@
-﻿using NotifyHub.Api.Source.Domain.Entities;
+﻿using NotifyHub.Api.Source.Application.DTOs;
+using NotifyHub.Api.Source.Domain.Entities;
 
 namespace NotifyHub.Api.Source.Domain.Interfaces
 {
@@ -7,6 +8,6 @@ namespace NotifyHub.Api.Source.Domain.Interfaces
         Task<List<Unit>> GetAllAsync();
         Task<Unit> GetByIdAsync(Guid id);
         Task CreateAsync(Unit unit);    
-        Task UpdateAsync();
+        Task UpdateAsync(Unit unit);
     }
 }

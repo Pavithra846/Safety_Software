@@ -1,4 +1,6 @@
-﻿using NotifyHub.Api.Source.Domain.Entities;
+﻿using NotifyHub.Api.Source.Application.DTOs;
+using NotifyHub.Api.Source.Domain.Entities;
+using NotifyHub.Api.Source.Domain.Enums;
 using NotifyHub.Api.Source.Domain.Interfaces;
 
 namespace NotifyHub.Api.Source.Application.Services
@@ -6,54 +8,81 @@ namespace NotifyHub.Api.Source.Application.Services
     public class UnitService
     {
         private readonly IUnitRepository _repo;
+        private readonly IStackRepository _stackrepo;
         private readonly INotificationService _notification;
 
-        public UnitService(IUnitRepository repo, INotificationService hub)
+        public UnitService(IUnitRepository repo, IStackRepository stackrepo, INotificationService hub)
         {
             _repo = repo;
+            _stackrepo = stackrepo;
             _notification = hub;
         }
-        public async Task CreateUnitAsync(Unit unit)
+        public async Task CreateUnitAsync(CreateUnitDTO dto)
         {
-            if (unit.UnitID == Guid.Empty)
-                unit.UnitID = Guid.NewGuid();
-
-            if (unit.CreatedOn == DateTime.MinValue)
-                unit.CreatedOn = DateTime.UtcNow;
-
-            unit.UpdatedOn = DateTime.UtcNow;
-            unit.IsActive = false;
-            unit.IsAvail = false;
-
-            //TODO: need logic
-
+            var unit = new Unit
+            {
+                UnitID = Guid.NewGuid(),
+                IsActive = false,
+                IsAvail = false,
+                CreatedOn = DateTime.Now,
+                UpdatedOn = DateTime.Now,
+                UnitName = dto.UnitName,
+                UnitType = dto.UnitType,
+            };
             await _repo.CreateAsync(unit);
             await _notification.SendAsync("UnitCreated", unit);
         }
 
-        public async Task<List<Unit>> GetAllUnitAsync()
+        public async Task<List<UnitResponseDTO>> GetAllUnitAsync()
         {
-            return await _repo.GetAllAsync();
+            var units = await _repo.GetAllAsync();
+            return units.Select(unit => new UnitResponseDTO
+            {
+                UnitID = unit.UnitID,
+                UnitName = unit.UnitName,
+                StkNbr = unit.StkNbr,
+                UnitType = unit.UnitType,
+                CreatedOn = unit.CreatedOn,
+                UpdatedOn = unit.UpdatedOn,
+                IsActive = unit.IsActive,
+                IsAvail = unit.IsAvail,
+                IsFinished = true
+            }).ToList();
         }
 
-        public async Task<Unit> GetUnitByIdAsync(Guid id)
+        public async Task<UnitResponseDTO> GetUnitByIdAsync(Guid id)
         {
-            return await _repo.GetByIdAsync(id);
+            var unit  =  await _repo.GetByIdAsync(id);
+            var dto = new UnitResponseDTO
+            {
+                UnitID = unit.UnitID,
+                UnitName = unit.UnitName,
+                StkNbr = unit.StkNbr,
+                UnitType = unit.UnitType,
+                CreatedOn = unit.CreatedOn,
+                UpdatedOn = unit.UpdatedOn,
+                IsActive = unit.IsActive,
+                IsAvail = unit.IsAvail,
+                IsFinished = true 
+            };
+            return dto;
         }
-        public async Task UpdateUnitByAsync(Unit unit)
+        public async Task UpdateUnitByAsync(Guid id, UpdateUnitDTO unit)
         {
-            var existingUnit = await _repo.GetByIdAsync(unit.UnitID);
+            var existingUnit = await _repo.GetByIdAsync(id);
 
             if (existingUnit == null)
                 throw new Exception("unit not found");
 
+            if (!existingUnit.IsAvail)
+                return;
+
             existingUnit.StkNbr = unit.StkNbr;
-            existingUnit.UnitType = unit.UnitType;
             existingUnit.UpdatedOn = DateTime.Now;
             if(unit.IsFinished)
                 existingUnit.IsActive = true;
 
-            await _repo.UpdateAsync();
+            await _repo.UpdateAsync(existingUnit);
         }
 
     }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NotifyHub.Api.Source.Application.DTOs;
 using NotifyHub.Api.Source.Application.Services;
 using NotifyHub.Api.Source.Domain.Entities;
 
@@ -17,7 +18,7 @@ namespace NotifyHub.Api.Controllers
 
         // ✅ Create Unit
         [HttpPost]
-        public async Task<IActionResult> CreateUnit([FromBody] Unit unit)
+        public async Task<IActionResult> CreateUnit([FromBody] CreateUnitDTO unit)
         {
             if (unit == null)
                 return BadRequest("Unit data is required");
@@ -47,16 +48,14 @@ namespace NotifyHub.Api.Controllers
             return Ok(unit);
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUnit(Guid id, [FromBody] Unit updatedUnit)
+        public async Task<IActionResult> UpdateUnit(Guid id, [FromBody] UpdateUnitDTO dto)
         {
-            if (id != updatedUnit?.UnitID)
-            {
-                return BadRequest("ID mismatch");
-            }
+            if (dto == null)
+                return BadRequest("Invalid data");
 
-            await _service.UpdateUnitByAsync(updatedUnit);
+            await _service.UpdateUnitByAsync(id, dto);
 
             return Ok("Unit Updated Succesfully");
-        }
+        }    
     }
 }

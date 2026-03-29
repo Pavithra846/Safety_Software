@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NotifyHub.Api.Source.Application.DTOs;
 using NotifyHub.Api.Source.Application.Services;
 using NotifyHub.Api.Source.Domain.Entities;
 
@@ -17,12 +18,12 @@ namespace NotifyHub.Api.Controllers
 
         // ✅ Create stack
         [HttpPost]
-        public async Task<IActionResult> CreateStack([FromBody] Stack stack)
+        public async Task<IActionResult> CreateStack([FromBody] CreateStackDto dto)
         {
-            if (stack == null)
+            if (dto == null)
                 return BadRequest("stack data is required");
 
-            await _service.CreateStackAsync(stack);
+            await _service.CreateStackAsync(dto);
 
             return Ok("stack created successfully");
         }
@@ -47,14 +48,12 @@ namespace NotifyHub.Api.Controllers
             return Ok(stack);
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateStack(Guid id, [FromBody] Stack updatedStack)
+        public async Task<IActionResult> UpdateStack(Guid id, [FromBody] UpdateStackDto dto)
         {
-            if (id != updatedStack?.StackID)
-            {
-                return BadRequest("ID mismatch");
-            }
+            if (dto == null)
+                return BadRequest("Invalid data");
 
-            await _service.UpdateStackByAsync(updatedStack);
+            await _service.UpdateStackByAsync(id, dto);
 
             return Ok("Stack Updated Succesfully");
         }

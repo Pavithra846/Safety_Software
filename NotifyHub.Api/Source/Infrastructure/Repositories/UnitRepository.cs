@@ -37,8 +37,9 @@ namespace NotifyHub.Api.Source.Infrastructure.Repositories
             return unit;
         }
 
-        public async Task UpdateAsync()
+        public async Task UpdateAsync(Unit unit)
         {
+            _context.Units.Update(unit);
             await _context.SaveChangesAsync();
         }
     }
