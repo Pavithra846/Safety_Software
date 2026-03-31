@@ -30,12 +30,21 @@ namespace NotifyHub.Api.Source.Infrastructure.Repositories
         {
             await _context.SaveChangesAsync();
         }
-
+        public async Task UpdateAsync(Stack stack)
+        {
+            _context.Stacks.Update(stack);
+            await _context.SaveChangesAsync();
+        }
         public async Task<int> GetMaxStackNumberForYearAsync(int year)
         {
             return await _context.Stacks
                 .Where(s => s.StkNbr.ToString().StartsWith(year.ToString()))
                 .MaxAsync(s => (int?)s.StkNbr) ?? 0;
+        }
+        public async Task DeleteAsync(Stack stack)
+        {
+            _context.Stacks.Remove(stack);
+            await _context.SaveChangesAsync();
         }
     }
 }

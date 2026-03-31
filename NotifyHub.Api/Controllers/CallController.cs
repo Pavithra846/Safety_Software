@@ -2,6 +2,7 @@
 using NotifyHub.Api.Source.Domain.Entities;
 using NotifyHub.Api.Source.Application.Services;
 using Microsoft.EntityFrameworkCore;
+using NotifyHub.Api.Source.Application.DTOs;
 
 namespace NotifyHub.Api.Controllers
 {
@@ -18,7 +19,7 @@ namespace NotifyHub.Api.Controllers
 
         // ✅ Create Call
         [HttpPost]
-        public async Task<IActionResult> CreateCall([FromBody] Call call)
+        public async Task<IActionResult> CreateCall([FromBody] CreateCallDTO call)
         {
             if (call == null)
                 return BadRequest("Call data is required");
@@ -49,14 +50,12 @@ namespace NotifyHub.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCall(Guid id, [FromBody] Call updatedCall)
+        public async Task<IActionResult> UpdateCall(Guid id, [FromBody] UpdateCallDTO dto)
         {
-            if (id != updatedCall?.CallID)
-            {
-                return BadRequest("ID mismatch");
-            }
+            if (dto == null)
+                return BadRequest("Invalid data");
 
-            await _service.UpdateCallByAsync(updatedCall);
+            await _service.UpdateCallByAsync(id, dto);
            
             return Ok("Call Updated Succesfully");
         }

@@ -29,20 +29,7 @@ namespace NotifyHub.Api.Source.Infrastructure.Repositories
         }
         public async Task UpdateAsync(Call call)
         {
-            var existingCall = await _context.Calls.FindAsync(call.CallID);
-
-            if (existingCall == null)
-            {
-                throw new Exception("Call not found");
-            }
-            existingCall.Location = call.Location;
-            existingCall.LandMark = call.LandMark;
-            existingCall.Type = call.Type;
-            existingCall.Name = call.Name;
-            existingCall.Comments = call.Comments;
-            existingCall.UpdatedDttm = DateTime.Now;
-            existingCall.Status = call.Status;
-
+            _context.Calls.Update(call);
             await _context.SaveChangesAsync();
         }
     }

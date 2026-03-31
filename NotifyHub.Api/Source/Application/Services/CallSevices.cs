@@ -1,4 +1,5 @@
-﻿using NotifyHub.Api.Source.Domain.Entities;
+﻿using NotifyHub.Api.Source.Application.DTOs;
+using NotifyHub.Api.Source.Domain.Entities;
 using NotifyHub.Api.Source.Domain.Interfaces;
 
 namespace NotifyHub.Api.Source.Application.Services
@@ -14,33 +15,84 @@ namespace NotifyHub.Api.Source.Application.Services
             _notification = hub;
         }
 
-        public async Task CreateCallAsync(Call call)
+        public async Task CreateCallAsync(CreateCallDTO dto)
         {
-            // ✅ Business logic here
-            if (call.CallID == Guid.Empty)
-                call.CallID = Guid.NewGuid();
-
-            if (call.CreatedDttm == DateTime.MinValue)
-                call.CreatedDttm = DateTime.UtcNow;
-
-            call.UpdatedDttm = DateTime.UtcNow;
+            var call = new Call
+            {
+                CallID = Guid.NewGuid(),
+                Location = dto.Location,
+                LandMark = dto.LandMark,
+                Comments = dto.Comments,
+                Type = dto.Type,
+                Name = dto.Name,
+                Status = dto.Status,
+                CreatedDttm = DateTime.Now,
+                UpdatedDttm = DateTime.Now
+            };
 
             // Save to DB
             await _repo.CreateCallAsync(call);
-            await _notification.SendAsync("CallCreated", call);
+            var CallResponse = new CallResponseDTO
+            {
+                CallID = Guid.NewGuid(),
+                CreatedDttm = call.CreatedDttm,
+                UpdatedDttm = call.UpdatedDttm,
+                Location = call.Location,
+                LandMark = call.LandMark,
+                Comments = call.Comments,
+                Type = call.Type,
+                Status = call.Status,
+                Name = call.Name
+            };
+            await _notification.SendAsync("CallCreated", CallResponse);
+
         }
-        public async Task<List<Call>> GetAllCalls()
+        public async Task<List<CallResponseDTO>> GetAllCalls()
         {
-            return await _repo.GetAllAsync();
+            var calls = await _repo.GetAllAsync();
+            return calls.Select(call => new CallResponseDTO
+            {
+                CallID = call.CallID,
+                CreatedDttm = call.CreatedDttm,
+                UpdatedDttm = call.UpdatedDttm,
+                Location = call.Location,
+                LandMark = call.LandMark,
+                Comments = call.Comments,
+                Type = call.Type,
+                Status = call.Status,
+                Name = call.Name
+
+            }).ToList();
         }
 
-        public async Task<Call> GetCallByIdAsync(Guid id)
+        public async Task<CallResponseDTO> GetCallByIdAsync(Guid id)
         {
-            return await _repo.GetByIdAsync(id);
+             var call = await _repo.GetByIdAsync(id);
+            var CallResponse = new CallResponseDTO
+            {
+                CallID = Guid.NewGuid(),
+                CreatedDttm = call.CreatedDttm,
+                UpdatedDttm = call.UpdatedDttm,
+                Location = call.Location,
+                LandMark = call.LandMark,
+                Comments = call.Comments,
+                Type = call.Type,
+                Status = call.Status,
+                Name = call.Name
+            };
+            return CallResponse;
         }
-        public async Task UpdateCallByAsync(Call call)
+        public async Task UpdateCallByAsync(Guid id, UpdateCallDTO dto)
         {
-            await _repo.UpdateAsync(call);
+            var existingcall = await _repo.GetByIdAsync(id);
+            if (existingcall == null)
+                throw new Exception("Invalid Data");
+
+            existingcall.Status = dto.Status;
+            existingcall.UpdatedDttm = DateTime.Now;
+            existingcall.Comments = dto.Comments;
+
+            await _repo.UpdateAsync(existingcall);
         }
     }
 }

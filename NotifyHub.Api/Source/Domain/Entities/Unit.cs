@@ -19,6 +19,5 @@ namespace NotifyHub.Api.Source.Domain.Entities
         public bool IsActive { get; set; }
 
         public bool IsAvail { get; set; }
-        public bool IsFinished { get; set; }
     }
 }
