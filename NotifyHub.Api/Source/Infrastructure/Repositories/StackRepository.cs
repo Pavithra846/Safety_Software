@@ -8,10 +8,12 @@ namespace NotifyHub.Api.Source.Infrastructure.Repositories
     public class StackRepository : IStackRepository
     {
         private readonly AppDbContext _context;
+        private readonly IConfiguration _config;
 
-        public StackRepository(AppDbContext context)
+        public StackRepository(AppDbContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
         public async Task CreateAsync(Stack stack)
         {

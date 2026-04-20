@@ -13,6 +13,7 @@ namespace NotifyHub.Api.Source.Infrastructure.Data
         public DbSet<Call> Calls { get; set; }
         public DbSet<Unit> Units { get; set; }
         public DbSet<Stack> Stacks { get; set; }
+        public DbSet<Users> Users { get; set; }
 
         #endregion
 
@@ -135,6 +136,24 @@ namespace NotifyHub.Api.Source.Infrastructure.Data
                 entity.Property(e => e.UpdatedDttm)
                     .IsRequired()
                     .HasColumnType("datetime2");
+            });
+
+            // Configure User table
+            modelBuilder.Entity<Users>(entity =>
+            {
+                entity.HasKey(e => e.UserId);
+
+                entity.Property(e => e.UserId)
+                    .ValueGeneratedOnAdd(); // ✅ correct for Guid
+
+                entity.Property(e => e.Username)
+                    .IsRequired();
+
+                entity.Property(e => e.Password)
+                    .IsRequired();
+
+                entity.Property(e => e.Role)
+                    .IsRequired();
             });
         }
     }
