@@ -34,7 +34,7 @@ namespace NotifyHub.Api.Source.Application.Services
             await _repo.CreateCallAsync(call);
             var CallResponse = new CallResponseDTO
             {
-                CallID = Guid.NewGuid(),
+                CallID = call.CallID,
                 CreatedDttm = call.CreatedDttm,
                 UpdatedDttm = call.UpdatedDttm,
                 Location = call.Location,
@@ -70,7 +70,7 @@ namespace NotifyHub.Api.Source.Application.Services
              var call = await _repo.GetByIdAsync(id);
             var CallResponse = new CallResponseDTO
             {
-                CallID = Guid.NewGuid(),
+                CallID = call.CallID,
                 CreatedDttm = call.CreatedDttm,
                 UpdatedDttm = call.UpdatedDttm,
                 Location = call.Location,
