@@ -45,7 +45,7 @@ namespace NotifyHub.Api.Source.Application.Services
                 Status = call.Status,
                 Name = call.Name
             };
-           // await _notification.SendAsync("CallCreated", CallResponse);
+            await _notification.SendNotification("CallCreated", CallResponse);
 
         }
         public async Task<List<CallResponseDTO>> GetAllCalls()

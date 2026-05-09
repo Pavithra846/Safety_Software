@@ -27,4 +27,8 @@
     <Folder Include="Source\Presentation\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\signalr-test.html" />
+  </ItemGroup>
+
 </Project>

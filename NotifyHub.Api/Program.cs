@@ -106,7 +106,6 @@ builder.Services.AddAuthentication("Bearer")
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
-app.MapHub<NotifyHub.Api.Hubs.NotificationHub>("/notificationHub");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -133,6 +132,7 @@ app.UseExceptionHandler(errorApp =>
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseStaticFiles();
 
 app.MapControllers();
 app.MapHub<NotificationHub>("/notificationHub");

@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignalR Notification Test</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+        }
+
+        .status {
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .connected {
+            color: green;
+        }
+
+        .disconnected {
+            color: red;
+        }
+
+        .notification-box {
+            margin-top: 20px;
+        }
+
+        .notification-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>SignalR Notification Test</h2>
+
+    <div id="status" class="status disconnected">
+        Connecting...
+    </div>
+
+    <div class="notification-box">
+        <h3>Notifications</h3>
+        <div id="notifications"></div>
+    </div>
+
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/notificationHub")
+            .build();
+
+        connection.on("ReceiveNotification", function (message) {
+            alert("New Notification: " + JSON.stringify(message));
+
+            const container = document.getElementById("notifications");
+
+            const item = document.createElement("div");
+            item.className = "notification-item";
+
+            item.innerText = JSON.stringify(message);
+
+            container.prepend(item);
+        });
+
+        connection.start()
+            .then(function () {
+                const status = document.getElementById("status");
+                status.innerText = "Connected to Notification Hub";
+                status.classList.remove("disconnected");
+                status.classList.add("connected");
+            })
+            .catch(function (err) {
+                console.error(err.toString());
+
+                const status = document.getElementById("status");
+                status.innerText = "Connection Failed";
+            });
+    </script>
+
+</body>
+</html>

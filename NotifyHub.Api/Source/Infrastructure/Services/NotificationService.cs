@@ -19,7 +19,7 @@ namespace NotifyHub.Api.Source.Infrastructure.Services
             _hubContext = hubContext;
             _repo = repo;
         }
-        public async Task SendAsync(string type, object data)
+        public async Task SendNotification(string type, object data)
         {
             var message = new NotificationMessage
             {
