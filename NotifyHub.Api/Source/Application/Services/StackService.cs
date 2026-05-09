@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NotifyHub.Api.Source.Application.DTOs;
+using NotifyHub.Api.Source.Application.Interface;
 using NotifyHub.Api.Source.Domain.Entities;
 using NotifyHub.Api.Source.Domain.Enums;
 using NotifyHub.Api.Source.Domain.Interfaces;
-using NotifyHub.Api.Source.Infrastructure.Data;
 
 namespace NotifyHub.Api.Source.Application.Services
 {
@@ -15,7 +15,7 @@ namespace NotifyHub.Api.Source.Application.Services
         public StackService(IStackRepository repo, ICallRepository callrepo, INotificationService notification)
         {
             _repo = repo;
-            _Callrepo = callrepo;
+            _Callrepo = callrepo;   
             _notification = notification;
         }
 
@@ -63,7 +63,7 @@ namespace NotifyHub.Api.Source.Application.Services
                         throw new Exception("Failed to generate unique Stack Number.");
                 }
             }
-            await _notification.SendAsync("StackCreated", stack);
+            //await _notification.SendAsync("StackCreated", stack);
             return new StackResponseDto
             {
                 StackID = stack.StackID,

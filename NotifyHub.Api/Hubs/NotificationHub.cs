@@ -2,7 +2,8 @@
 
 namespace NotifyHub.Api.Hubs
 {
-    public class CallHub : Hub
+    public class NotificationHub : Hub
     {
+      
     }
 }

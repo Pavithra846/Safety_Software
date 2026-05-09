@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NotifyHub.Api.Hubs;
+using NotifyHub.Api.Source.Application.Interface;
 using NotifyHub.Api.Source.Application.Services;
 using NotifyHub.Api.Source.Domain.Interfaces;
 using NotifyHub.Api.Source.Infrastructure.Authentication.Services;
@@ -56,12 +58,14 @@ builder.Services.AddScoped<ICallRepository, CallRepository>();
 builder.Services.AddScoped<IUnitRepository, UnitRepository>();
 builder.Services.AddScoped<IStackRepository, StackRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<CallService>();
 builder.Services.AddScoped<StackService>();
 builder.Services.AddScoped<UnitService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<LoginService>();
+builder.Services.AddSignalR();
 
 // Add CORS
 builder.Services.AddCors(options =>
@@ -77,6 +81,12 @@ builder.Services.AddSignalR();
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer("Bearer", options =>
     {
+        options.Events = new JwtBearerEvents { OnMessageReceived = context =>
+        { var accessToken = context.Request.Query["access_token"].FirstOrDefault();
+            var path = context.HttpContext.Request.Path; if (!string.IsNullOrEmpty(accessToken) 
+            && path.StartsWithSegments("/callHub"))
+            { context.Token = accessToken; } return Task.CompletedTask; } 
+        };
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -92,10 +102,11 @@ builder.Services.AddAuthentication("Bearer")
             )
         };
     });
+
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
-app.MapHub<CallHub>("/callHub");
+app.MapHub<NotifyHub.Api.Hubs.NotificationHub>("/notificationHub");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -124,5 +135,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();

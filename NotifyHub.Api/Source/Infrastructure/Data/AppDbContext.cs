@@ -14,6 +14,7 @@ namespace NotifyHub.Api.Source.Infrastructure.Data
         public DbSet<Unit> Units { get; set; }
         public DbSet<Stack> Stacks { get; set; }
         public DbSet<Users> Users { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         #endregion
 
@@ -154,6 +155,27 @@ namespace NotifyHub.Api.Source.Infrastructure.Data
 
                 entity.Property(e => e.Role)
                     .IsRequired();
+            });
+            // Configure Notification table
+            modelBuilder.Entity<Notification>(entity =>
+            {
+                entity.HasKey(e => e.NotifyId);
+
+                entity.Property(e => e.NotifyId)
+                      .ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Message)
+                      .IsRequired()
+                      .HasMaxLength(500);
+
+                entity.Property(e => e.UserId)
+                      .IsRequired();
+
+                entity.Property(e => e.IsRead)
+                      .IsRequired();
+
+                entity.Property(e => e.CreatedAt)
+                      .IsRequired();
             });
         }
     }

@@ -1,4 +1,5 @@
 ﻿using NotifyHub.Api.Source.Application.DTOs;
+using NotifyHub.Api.Source.Application.Interface;
 using NotifyHub.Api.Source.Domain.Entities;
 using NotifyHub.Api.Source.Domain.Interfaces;
 
@@ -44,7 +45,7 @@ namespace NotifyHub.Api.Source.Application.Services
                 Status = call.Status,
                 Name = call.Name
             };
-            await _notification.SendAsync("CallCreated", CallResponse);
+           // await _notification.SendAsync("CallCreated", CallResponse);
 
         }
         public async Task<List<CallResponseDTO>> GetAllCalls()
@@ -68,6 +69,7 @@ namespace NotifyHub.Api.Source.Application.Services
         public async Task<CallResponseDTO> GetCallByIdAsync(Guid id)
         {
              var call = await _repo.GetByIdAsync(id);
+            if (call == null) return null;
             var CallResponse = new CallResponseDTO
             {
                 CallID = call.CallID,

@@ -1,4 +1,5 @@
 ﻿using NotifyHub.Api.Source.Application.DTOs;
+using NotifyHub.Api.Source.Application.Interface;
 using NotifyHub.Api.Source.Domain.Entities;
 using NotifyHub.Api.Source.Domain.Enums;
 using NotifyHub.Api.Source.Domain.Interfaces;
@@ -30,7 +31,7 @@ namespace NotifyHub.Api.Source.Application.Services
                 UnitType = dto.UnitType,
             };
             await _repo.CreateAsync(unit);
-            await _notification.SendAsync("UnitCreated", unit);
+            //await _notification.SendAsync("UnitCreated", unit);
         }
 
         public async Task<List<UnitResponseDTO>> GetAllUnitAsync()
