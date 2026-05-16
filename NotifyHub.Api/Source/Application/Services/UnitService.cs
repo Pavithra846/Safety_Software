@@ -31,8 +31,20 @@ namespace NotifyHub.Api.Source.Application.Services
                 UnitType = dto.UnitType,
             };
             await _repo.CreateAsync(unit);
-            //await _notification.SendAsync("UnitCreated", unit);
+            var UnitResponse = new UnitResponseDTO
+            {
+                UnitID = unit.UnitID,
+                UnitName = unit.UnitName,
+                StkNbr = unit.StkNbr,
+                UnitType = unit.UnitType,
+                IsActive = unit.IsActive,
+                IsAvail = unit.IsAvail,
+                CreatedOn = unit.CreatedOn,
+                UpdatedOn = unit.UpdatedOn,
+            };
+            await _notification.SendNotification("UnitCreated", UnitResponse);
         }
+
 
         public async Task<List<UnitResponseDTO>> GetAllUnitAsync()
         {
@@ -84,6 +96,18 @@ namespace NotifyHub.Api.Source.Application.Services
                 existingUnit.IsActive = true;
 
             await _repo.UpdateAsync(existingUnit);
+            var UnitResponse = new UnitResponseDTO
+            {
+                UnitID = existingUnit.UnitID,
+                UnitName = existingUnit.UnitName,
+                StkNbr = existingUnit.StkNbr,
+                UnitType = existingUnit.UnitType,
+                IsActive = existingUnit.IsActive,
+                IsAvail = existingUnit.IsAvail,
+                CreatedOn = existingUnit.CreatedOn,
+                UpdatedOn = existingUnit.UpdatedOn,
+            };
+            await _notification.SendNotification("UnitUpdated", UnitResponse);
         }
 
     }

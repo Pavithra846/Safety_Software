@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using NotifyHub.Api.Hubs;
 using NotifyHub.Api.Source.Application.Common.Models;
+using NotifyHub.Api.Source.Application.DTOs;
 using NotifyHub.Api.Source.Application.Interface;
 using NotifyHub.Api.Source.Domain.Entities;
 using NotifyHub.Api.Source.Infrastructure.Repositories;
@@ -29,7 +30,7 @@ namespace NotifyHub.Api.Source.Infrastructure.Services
 
             await _hubContext.Clients.All.SendAsync("ReceiveNotification", message);
         }
-        public async Task CreateNotification(string message, Guid userId)
+        public async Task CreateNotification(string message,CallResponseDTO CallResponse, Guid userId)
         {
             var notification = new Notification
             {
@@ -39,10 +40,20 @@ namespace NotifyHub.Api.Source.Infrastructure.Services
                 IsRead = false,
                 CreatedAt = DateTime.Now
             };
-            await _repo.Add(notification);
+            await _repo.AddAsync(notification);
 
-            // 🔥 SignalR push
+            // SignalR push
             await _hubContext.Clients.All.SendAsync("ReceiveNotification", message);
+        }
+
+        public async Task<List<Notification>> GetUnread(Guid userId)
+        {
+            return await _repo.GetUnreadAsync(userId);
+        }
+
+        public async Task MarkAsRead(Guid notifyId)
+        {
+            await _repo.MarkAsReadAsync(notifyId);
         }
     }
 }

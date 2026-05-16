@@ -19,16 +19,16 @@ namespace NotifyHub.Api.Source.Application.Services
             _notification = notification;
         }
 
-        public async Task<StackResponseDto> CreateStackAsync(CreateStackDto dto)
+        public async Task CreateStackAsync(Guid callID)
         {
-            var call = await _Callrepo.GetByIdAsync(dto.CallID);
+            var call = await _Callrepo.GetByIdAsync(callID);
             if (call == null)
                 throw new Exception("Invalid CallID");
 
             var stack = new Stack
             {
                 StackID = Guid.NewGuid(),
-                CallID = dto.CallID,
+                CallID = callID,
                 Location = call.Location,
                 Status = 0, //Stack Created
                 CreatedDttm = DateTime.Now,
@@ -63,8 +63,7 @@ namespace NotifyHub.Api.Source.Application.Services
                         throw new Exception("Failed to generate unique Stack Number.");
                 }
             }
-            //await _notification.SendAsync("StackCreated", stack);
-            return new StackResponseDto
+            var StackResponse = new StackResponseDto
             {
                 StackID = stack.StackID,
                 CallID = stack.CallID,
@@ -74,6 +73,7 @@ namespace NotifyHub.Api.Source.Application.Services
                 CreatedDttm = stack.CreatedDttm,
                 UpdatedDttm = stack.UpdatedDttm
             };
+            await _notification.SendNotification("StackCreated", StackResponse);
         }
         public async Task<List<StackResponseDto>> GetAllStackAsync()
         {
@@ -94,7 +94,7 @@ namespace NotifyHub.Api.Source.Application.Services
 
         public async Task<StackResponseDto> GetStackByIdAsync(Guid id)
         {
-            var stack = await _repo.GetByIdAsync(id);
+            var stack = await _repo.GetByStackIdAsync(id);
             var dto = new StackResponseDto
             {
                 StackID = stack.StackID,
@@ -108,15 +108,29 @@ namespace NotifyHub.Api.Source.Application.Services
             return dto;
 
         }
-        public async Task UpdateStackByAsync(Guid id, UpdateStackDto dto)
+        public async Task<(bool, Guid CallID)> UpdateStackByAsync(Guid id, UpdateStackDto dto)
         {
-                var existingStack = await _repo.GetByIdAsync(id);
+                var existingStack = await _repo.GetByStackIdAsync(id);
 
                 if (existingStack == null)
                     throw new Exception("Invalid Data");
+
+            var StackResponse = new StackResponseDto
+            {
+                StackID = existingStack.StackID,
+                CallID = existingStack.CallID,
+                StkNbr = existingStack.StkNbr,
+                Location = existingStack.Location,
+                Status = existingStack.Status,
+                CreatedDttm = existingStack.CreatedDttm,
+                UpdatedDttm = existingStack.UpdatedDttm
+            };
             if (dto.Status == StackStatus.Finished)
             {
                 await _repo.DeleteAsync(existingStack);
+                await _notification.SendNotification("StackFinished", StackResponse);
+                bool hasStacks = await _repo.HasStacksByCallIdAsync(existingStack.CallID);
+                return (hasStacks, existingStack.CallID);
             }
             else
             {
@@ -125,8 +139,11 @@ namespace NotifyHub.Api.Source.Application.Services
                 existingStack.UpdatedDttm = DateTime.Now;
 
                 await _repo.UpdateAsync(existingStack);
+                await _notification.SendNotification("StackUpdated", StackResponse);
             }
-               
+            return (false, existingStack.CallID);
+
+
         }
 
     }

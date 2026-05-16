@@ -4,6 +4,9 @@ namespace NotifyHub.Api.Source.Application.Interface
 {
     public interface INotificationRepository
     {
-        Task Add(Notification notification);
+        Task AddAsync(Notification notification);
+        Task<List<Notification>> GetUnreadAsync(Guid userId);
+
+        Task MarkAsReadAsync(Guid notifyId);
     }
 }

@@ -62,6 +62,7 @@ builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<CallService>();
 builder.Services.AddScoped<StackService>();
 builder.Services.AddScoped<UnitService>();
+builder.Services.AddScoped<CallWorkflowService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<LoginService>();

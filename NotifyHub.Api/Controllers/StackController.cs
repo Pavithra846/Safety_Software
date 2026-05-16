@@ -10,10 +10,12 @@ namespace NotifyHub.Api.Controllers
     public class StackController : ControllerBase
     {
         private readonly StackService _service;
+        private readonly CallWorkflowService _CallWorkflowService;
 
-        public StackController(StackService service)
+        public StackController(StackService service, CallWorkflowService callWorkflowService)
         {
             _service = service;
+            _CallWorkflowService = callWorkflowService;
         }
 
         // ✅ Create stack
@@ -23,7 +25,7 @@ namespace NotifyHub.Api.Controllers
             if (dto == null)
                 return BadRequest("stack data is required");
 
-            await _service.CreateStackAsync(dto);
+            //await _service.CreateStackAsync(dto);
 
             return Ok("stack created successfully");
         }
@@ -52,8 +54,9 @@ namespace NotifyHub.Api.Controllers
         {
             if (dto == null)
                 return BadRequest("Invalid data");
-
-            await _service.UpdateStackByAsync(id, dto);
+            bool hasStacks = false; Guid callid = Guid.Empty;
+             (hasStacks, callid) = await _service.UpdateStackByAsync(id, dto);
+            if(hasStacks) await _CallWorkflowService.FinishStackAndCallAsync(callid, true);
 
             return Ok("Stack Updated Succesfully");
         }

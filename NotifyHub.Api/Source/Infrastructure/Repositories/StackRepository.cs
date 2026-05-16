@@ -24,9 +24,15 @@ namespace NotifyHub.Api.Source.Infrastructure.Repositories
         {
             return await _context.Stacks.ToListAsync();
         }
-        public async Task<Stack> GetByIdAsync(Guid Id)
+        public async Task<Stack> GetByStackIdAsync(Guid Id)
         {
             return await _context.Stacks.FindAsync(Id);
+        }
+
+        public async Task<bool> HasStacksByCallIdAsync(Guid callId)
+        {
+            return await _context.Stacks
+                .AnyAsync(x => x.CallID == callId);
         }
         public async Task SaveAsync()
         {
