@@ -55,7 +55,7 @@ namespace NotifyHub.Api.Controllers
 
             await _service.UpdateUnitByAsync(id, dto);
 
-            return Ok("Unit Updated Succesfully");
+            return Ok("Unit Updated Successfully");
         }    
     }
 }

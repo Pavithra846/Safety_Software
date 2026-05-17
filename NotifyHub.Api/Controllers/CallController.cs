@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using NotifyHub.Api.Source.Application.DTOs;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace NotifyHub.Api.Controllers
 {
@@ -26,16 +27,23 @@ namespace NotifyHub.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCall([FromBody] CreateCallDTO call)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            Guid currentUserId = Guid.Parse(userId);
 
             if (call == null)
                 return BadRequest("Call data is required");
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized("Invalid token");
+            Guid currentUserId = Guid.Parse(userId);
 
-            var callreturn = await _service.CreateCallAsync(call, currentUserId);
-            await _CallWorkflowService.CreateCallWithStackAsync(callreturn.CallID);
 
-            return Ok("Call created successfully");
+            var createdCall = await _service.CreateCallAsync(call, currentUserId);
+            await _CallWorkflowService.CreateCallWithStackAsync(createdCall.CallID);
+
+            return Ok(new
+            {
+                Message = "Call created successfully",
+                CallId = createdCall.CallID
+            });
         }
 
         // ✅ Get All Calls
@@ -59,14 +67,12 @@ namespace NotifyHub.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCall(Guid id, [FromBody] UpdateCallDTO dto)
         {
-            if (dto == null)
-                return BadRequest("Invalid data");
-
             await _service.UpdateCallByAsync(id, dto);
-           
-            return Ok("Call Updated Succesfully");
+
+            return Ok("Call Updated Successfully");
         }
     }
 }

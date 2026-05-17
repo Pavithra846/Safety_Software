@@ -25,8 +25,8 @@ namespace NotifyHub.Api.Source.Application.Services
                 UnitID = Guid.NewGuid(),
                 IsActive = false,
                 IsAvail = false,
-                CreatedOn = DateTime.Now,
-                UpdatedOn = DateTime.Now,
+                CreatedOn = DateTime.UtcNow,
+                UpdatedOn = DateTime.UtcNow,
                 UnitName = dto.UnitName,
                 UnitType = dto.UnitType,
             };
@@ -49,6 +49,8 @@ namespace NotifyHub.Api.Source.Application.Services
         public async Task<List<UnitResponseDTO>> GetAllUnitAsync()
         {
             var units = await _repo.GetAllAsync();
+            if (units == null)
+                throw new KeyNotFoundException("unit not found");
             return units.Select(unit => new UnitResponseDTO
             {
                 UnitID = unit.UnitID,
@@ -66,6 +68,8 @@ namespace NotifyHub.Api.Source.Application.Services
         public async Task<UnitResponseDTO> GetUnitByIdAsync(Guid id)
         {
             var unit  =  await _repo.GetByIdAsync(id);
+            if (unit == null)
+                throw new KeyNotFoundException("unit not found");
             var dto = new UnitResponseDTO
             {
                 UnitID = unit.UnitID,
@@ -85,13 +89,13 @@ namespace NotifyHub.Api.Source.Application.Services
             var existingUnit = await _repo.GetByIdAsync(id);
 
             if (existingUnit == null)
-                throw new Exception("unit not found");
+                throw new KeyNotFoundException("unit not found");
 
             if (!existingUnit.IsAvail)
                 return;
 
             existingUnit.StkNbr = unit.StkNbr;
-            existingUnit.UpdatedOn = DateTime.Now;
+            existingUnit.UpdatedOn = DateTime.UtcNow;
             if(unit.IsFinished)
                 existingUnit.IsActive = true;
 

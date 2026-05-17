@@ -23,7 +23,7 @@ namespace NotifyHub.Api.Source.Application.Services
         {
             var call = await _Callrepo.GetByIdAsync(callID);
             if (call == null)
-                throw new Exception("Invalid CallID");
+                throw new KeyNotFoundException("Invalid CallId");
 
             var stack = new Stack
             {
@@ -31,8 +31,8 @@ namespace NotifyHub.Api.Source.Application.Services
                 CallID = callID,
                 Location = call.Location,
                 Status = 0, //Stack Created
-                CreatedDttm = DateTime.Now,
-                UpdatedDttm = DateTime.Now
+                CreatedDttm = DateTime.UtcNow,
+                UpdatedDttm = DateTime.UtcNow
             };
 
 
@@ -42,7 +42,7 @@ namespace NotifyHub.Api.Source.Application.Services
             {
                 try
                 {
-                    int currentYear = DateTime.Now.Year;
+                    int currentYear = DateTime.UtcNow.Year;
 
                     var maxNumber = await _repo.GetMaxStackNumberForYearAsync(currentYear);
 
@@ -78,6 +78,8 @@ namespace NotifyHub.Api.Source.Application.Services
         public async Task<List<StackResponseDto>> GetAllStackAsync()
         {
             var stacks = await _repo.GetAllAsync();
+            if (stacks == null)
+                throw new KeyNotFoundException("Stack Not Found");
             return stacks.Select(stack => new StackResponseDto
             {
                 StackID = stack.StackID,
@@ -95,6 +97,8 @@ namespace NotifyHub.Api.Source.Application.Services
         public async Task<StackResponseDto> GetStackByIdAsync(Guid id)
         {
             var stack = await _repo.GetByStackIdAsync(id);
+            if (stack == null)
+                throw new KeyNotFoundException("Stack Not Found");
             var dto = new StackResponseDto
             {
                 StackID = stack.StackID,
@@ -113,7 +117,7 @@ namespace NotifyHub.Api.Source.Application.Services
                 var existingStack = await _repo.GetByStackIdAsync(id);
 
                 if (existingStack == null)
-                    throw new Exception("Invalid Data");
+                    throw new KeyNotFoundException("Stack Not Found");
 
             var StackResponse = new StackResponseDto
             {
@@ -136,7 +140,7 @@ namespace NotifyHub.Api.Source.Application.Services
             {
                 existingStack.Location = dto.Location;
                 existingStack.Status = dto.Status;
-                existingStack.UpdatedDttm = DateTime.Now;
+                existingStack.UpdatedDttm = DateTime.UtcNow;
 
                 await _repo.UpdateAsync(existingStack);
                 await _notification.SendNotification("StackUpdated", StackResponse);

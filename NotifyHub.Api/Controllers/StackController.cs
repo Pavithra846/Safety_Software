@@ -58,7 +58,7 @@ namespace NotifyHub.Api.Controllers
              (hasStacks, callid) = await _service.UpdateStackByAsync(id, dto);
             if(hasStacks) await _CallWorkflowService.FinishStackAndCallAsync(callid, true);
 
-            return Ok("Stack Updated Succesfully");
+            return Ok("Stack Updated Successfully");
         }
     }
 }

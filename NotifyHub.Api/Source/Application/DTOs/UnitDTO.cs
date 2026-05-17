@@ -4,7 +4,7 @@ namespace NotifyHub.Api.Source.Application.DTOs
 {
     public class CreateUnitDTO
     {
-        public string UnitName { get; set; }
+        public string? UnitName { get; set; }
 
         public UnitType UnitType { get; set; }
 
@@ -31,7 +31,7 @@ namespace NotifyHub.Api.Source.Application.DTOs
     {
         public Guid UnitID { get; set; }
 
-        public string UnitName { get; set; }
+        public string? UnitName { get; set; }
 
         public long? StkNbr { get; set; }
 

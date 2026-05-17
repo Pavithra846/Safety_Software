@@ -38,7 +38,7 @@ namespace NotifyHub.Api.Source.Infrastructure.Services
                 Message = message,
                 UserId = userId,
                 IsRead = false,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.UtcNow
             };
             await _repo.AddAsync(notification);
 
