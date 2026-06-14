@@ -60,16 +60,18 @@ POST	  /api/notifications	      Send a new notification
 GET	    /api/notifications	      Get all notifications
 GET	    /api/notifications/{id}	  Get notification by ID
 
-**Key Highlights**
-Clean layered architecture
-Scalable notification system
-Real-time notification support
-SQL Server-backed persistence
-Enterprise-ready API structure
+## Key Highlights
 
-**Future Enhancements**
-User-specific notification delivery
-Notification read/unread status
-Email or SMS notification integration
-Authentication and authorization
-Notification priority levels
+- Clean layered architecture
+- Scalable notification system
+- Real-time notification support
+- SQL Server-backed persistence
+- Enterprise-ready API structure
+
+## Future Enhancements
+
+- User-specific notification delivery
+- Notification read/unread status
+- Email or SMS notification integration
+- Authentication and authorization
+- Notification priority levels
